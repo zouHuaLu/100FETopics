@@ -31,21 +31,21 @@ promise.then(onFulfilled,onRejected)
 ```
 
 1. 参数要求
-	1.1 onFulfilled 必须是函数类型，如果不是函数，应该被忽略。
-	1.2 onRejected 必须是函数类型，如果不是函数，应该被忽略。
+	1. onFulfilled 必须是函数类型，如果不是函数，应该被忽略。
+	1. onRejected 必须是函数类型，如果不是函数，应该被忽略。
 2. onFulfilled 特性
-	2.1 在promise变成 fulfilled 时，应该调用 onFulfilled，参数是 value。
-	2.2 在promise变成 fulfilled之前，不应该被调用。
-	2.3 只能被调用一次。
+	1. 在promise变成 fulfilled 时，应该调用 onFulfilled，参数是 value。
+	2. 在promise变成 fulfilled之前，不应该被调用。
+	3. 只能被调用一次。
 3. onRejected 特性
-	3.1 在promise变成 rejected 时，应该调用 onRejected，参数是 reason。
-	3.2 在promise变成 rejected之前，不应该被调用。
-	3.3 只能被调用一次。
+	1 在promise变成 rejected 时，应该调用 onRejected，参数是 reason。
+	2 在promise变成 rejected之前，不应该被调用。
+	3 只能被调用一次。
 4. onFulfilled和onRejected是微任务
 	queueMicrotask 实现微任务的调用
 5. then方法可以被调用多次
-	5.1 promise 变成 fulfilled 后，所有的onFulfilled的回调都应该按照then的顺序执行。
+	1. promise 变成 fulfilled 后，所有的onFulfilled的回调都应该按照then的顺序执行。
 	在实现promise的时候，需要一个数组来存储 onFulfilled 的callback回调。
-	5.2 promise 变成 rejected 后，所有的onRejected的回调都应该按照then的顺序执行。
+	2. promise 变成 rejected 后，所有的onRejected的回调都应该按照then的顺序执行。
 	在实现promise的时候，需要一个数组来存储 onRejected 的callback回调。
 	
