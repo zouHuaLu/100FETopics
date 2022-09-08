@@ -51,20 +51,21 @@ promise.then(onFulfilled,onRejected)
 6. then的返回值是一个promise
 	返回的promise是新的还是旧的呢？
 	
-```js
- const promise2 = promise1.then(onFulfilled,onRejected)
- // 新的，promise1的状态改变了，就不可以再改变了，所以promise2变成了pending状态
-```
+	```js
+	 const promise2 = promise1.then(onFulfilled,onRejected)
+	 // 新的，promise1的状态改变了，就不可以再改变了，所以promise2变成了pending状态
+	```
 
 	1. onFulfilled 或者 onRejected 执行结果为x，调用resolvePromise。
 	2. onFulfilled 或者 onRejected 执行抛出异常，promise2需要被reject
 	3. 如果onFulfilled 不是一个函数，promise2以promise1的value触发fulfilled。
 	4. 如果onRejected 不是一个函数，promise2以promise1的reason触发rejected。
+
 7. resolvePromise
-8. 
-```js 
- resolvePromise(promise2,x,resolve,reject)
-```
+
+	```js 
+	 resolvePromise(promise2,x,resolve,reject)
+	```
 
 	1 如果promise2和x相等，那么reject TypeError 报错
 	2 如果 x 是一个promise
