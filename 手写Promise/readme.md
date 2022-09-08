@@ -48,4 +48,22 @@ promise.then(onFulfilled,onRejected)
 	在实现promise的时候，需要一个数组来存储 onFulfilled 的callback回调。
 	2. promise 变成 rejected 后，所有的onRejected的回调都应该按照then的顺序执行。
 	在实现promise的时候，需要一个数组来存储 onRejected 的callback回调。
-	
+6. then的返回值是一个promise
+	返回的promise是新的还是旧的呢？
+```js
+	const promise2 = promise1.then(onFulfilled,onRejected)
+	// 新的，promise1的状态改变了，就不可以再改变了，所以promise2变成了pending状态
+```
+	1. onFulfilled 或者 onRejected 执行结果为x，调用resolvePromise。
+	2. onFulfilled 或者 onRejected 执行抛出异常，promise2需要被reject
+	3. 如果onFulfilled 不是一个函数，promise2以promise1的value触发fulfilled。
+	4. 如果onRejected 不是一个函数，promise2以promise1的reason触发rejected。
+7. resolvePromise
+```js 
+resolvePromise(promise2,x,resolve,reject)
+```
+	1 如果promise2和x相等，那么reject TypeError 报错
+	2 如果 x 是一个promise
+		1. 如果x是pending，promise的状态必须也是pending，知道x变成fulfilled / rejected
+		2. 
+ 
