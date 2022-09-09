@@ -13,7 +13,6 @@ class MPromise {
     this.status = PENDING;
     this.value = null;
     this.reason = null;
-
     try {
       fn(this.resolve.bind(this), this.reject.bind(this));
     } catch (e) {
@@ -22,13 +21,23 @@ class MPromise {
   }
 
   get status() {
-    return this.status;
+    return this._status;
   }
 
   set status(newStatus) {
-    this.status = newStatus;
+    this._status = newStatus;
     switch (newStatus) {
       case FULFILLED:
+        {
+          this.FULFILLED_CALLBACK_LIST.forEach((cb) => {
+            cb(this.value);
+          });
+        }
+        break;
+      case REJECTED:
+        this.REJECTED_CALLBACK_LIST.forEach((cb) => {
+          cb(this.reason);
+        });
         break;
     }
   }
@@ -64,12 +73,30 @@ class MPromise {
     // this.resolve(111)
     // }).then()
     const promise2 = new MPromise((resolve, reject) => {
+      // onFulfilled 或者 onRejected 执行抛出异常，promise2 需要被 reject
+      const fulfilledMicrotask = () => {
+        try {
+          // onFulfilled 或者 onRejected 执行结果为 x，调用 resolvePromise。
+          const x = realOnFulfilled(this.value);
+          this.resolvePromise(promise2, x, resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+      };
+      const rejextedMicrotask = () => {
+        try {
+          const x = realOnRejected(this.reason);
+          this.resolvePromise(promise2, x, resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+      };
       switch (this.status) {
         case FULFILLED:
-          realOnFulfilled();
+          fulfilledMicrotask();
           break;
         case REJECTED:
-          realOnRejected();
+          rejextedMicrotask();
           break;
         case PENDING:
           this.FULFILLED_CALLBACK_LIST.push(realOnFulfilled);
@@ -81,9 +108,13 @@ class MPromise {
     });
     return promise2;
   }
+  resolvePromise(promise2, x, resolve, reject) {}
   ifFunction(value) {
     return typeof value === "function";
   }
 }
 
-const promise = new MPromise((resolve, reject) => {});
+const promise = new MPromise((resolve, reject) => {
+  console.log(1);
+  resolve(2);
+});
