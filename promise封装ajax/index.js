@@ -15,6 +15,11 @@ function ajax(url) {
   });
 }
 
-ajax("./data.json").then((data) => {
-  console.log(data);
-});
+ajax("./data1.json").then(
+  (data) => {
+    console.log(data);
+  },
+  (error) => {
+    console.log(error);
+  }
+);
