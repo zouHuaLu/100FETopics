@@ -13,15 +13,23 @@ function other() {
   });
 }
 
-let p1 = promise.then((value) => {
+// let p1 = promise.then((value) => {
+//   console.log(value);
+//   return p1;
+// });
+// p1.then(
+//   (value1) => {
+//     console.log(value1);
+//   },
+//   (reason) => {
+//     console.log(reason);
+//   }
+// );
+
+// MyPromise.all(["a", "b"]).then((data) => {
+//   console.log(data);
+// });
+
+MyPromise.resolve(100).then((value) => {
   console.log(value);
-  return p1;
 });
-p1.then(
-  (value1) => {
-    console.log(value1);
-  },
-  (reason) => {
-    console.log(reason);
-  }
-);
