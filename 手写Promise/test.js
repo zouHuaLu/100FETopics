@@ -7,22 +7,21 @@ let promise = new MyPromise((resolve, reject) => {
   resolve("success,哈哈哈");
 });
 
-promise.then((value) => {
-  console.log(1);
-  console.log(value);
-});
-
-promise.then((value) => {
-  console.log(2);
-  console.log(value);
-});
-
-promise
-  .then((value) => {
-    console.log(3);
-    console.log(value);
-    return 300;
-  })
-  .then((value1) => {
-    console.log(value1);
+function other() {
+  return new MyPromise((resolve, reject) => {
+    resolve("other");
   });
+}
+
+let p1 = promise.then((value) => {
+  console.log(value);
+  return p1;
+});
+p1.then(
+  (value1) => {
+    console.log(value1);
+  },
+  (reason) => {
+    console.log(reason);
+  }
+);

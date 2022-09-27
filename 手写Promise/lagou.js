@@ -22,7 +22,11 @@ const REJECTED = "rejected";
 
 class MyPromise {
   constructor(executor) {
-    executor(this.resolve, this.reject);
+    try {
+      executor(this.resolve, this.reject);
+    } catch (error) {
+      this.reject(error);
+    }
   }
   // promise状态
   status = PENDING;
@@ -45,10 +49,10 @@ class MyPromise {
     this.value = value;
     // 判断成功回调是否存在，存在就调用
     while (this.successCallback.length > 0) {
-      this.successCallback.shift()(this.value);
+      this.successCallback.shift()();
     }
   };
-  //   reason失败的值
+  // reason失败的值
   reject = (reason) => {
     if (this.status != PENDING) return;
     // 将状态改为失败
@@ -56,25 +60,85 @@ class MyPromise {
     this.reason = reason;
     // 判断失败回调是否存在，存在就调用
     while (this.failCallback.length > 0) {
-      this.failCallback.shift()(this.reason);
+      this.failCallback.shift()();
     }
   };
   then(successCallback, failCallback) {
+    successCallback ? successCallback : (value) => value;
+    failCallback
+      ? failCallback
+      : (reason) => {
+          throw reason;
+        };
     let promise2 = new MyPromise((resolve, reject) => {
       // 判断状态
       if (this.status === FULFILLED) {
-        let x = successCallback(this.value);
-        resolve(x);
+        setTimeout(() => {
+          try {
+            let x = successCallback(this.value);
+            // 判断x的值是普通值还是promise对象
+            // 如果是普通值,直接调用resolve
+            // 如果是promise对象,查看promise对象返回的结果
+            // 再根据promise对象返回的结果,决定调用resolve还是reject
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (e) {
+            reject(e);
+          }
+        }, 0);
       } else if (this.status === REJECTED) {
-        failCallback(this.reason);
+        setTimeout(() => {
+          try {
+            let x = failCallback(this.reason);
+            // 判断x的值是普通值还是promise对象
+            // 如果是普通值,直接调用resolve
+            // 如果是promise对象,查看promise对象返回的结果
+            // 再根据promise对象返回的结果,决定调用resolve还是reject
+            resolvePromise(promise2, x, resolve, reject);
+          } catch (e) {
+            reject(e);
+          }
+        }, 0);
       } else {
         // 等待
         // 将成功回调和失败回调存储起来
-        this.successCallback.push(successCallback);
-        this.failCallback.push(failCallback);
+        this.successCallback.push(() => {
+          setTimeout(() => {
+            try {
+              let x = successCallback(this.value);
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (e) {
+              reject(e);
+            }
+          }, 0);
+        });
+        this.failCallback.push(() => {
+          setTimeout(() => {
+            try {
+              let x = failCallback(this.reason);
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (e) {
+              reject(e);
+            }
+          }, 0);
+        });
       }
     });
     return promise2;
+  }
+}
+
+function resolvePromise(promise2, x, resolve, reject) {
+  if (promise2 === x) {
+    return reject(
+      new TypeError("Chaning cycle detected for promise #<MyPromise>")
+    );
+  }
+  if (x instanceof MyPromise) {
+    // promise对象
+    x.then(resolve, reject);
+  } else {
+    // 普通值
+    resolve(x);
   }
 }
 
