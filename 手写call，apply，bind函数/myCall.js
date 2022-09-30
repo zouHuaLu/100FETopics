@@ -1,5 +1,5 @@
 Function.prototype.myCall = function (context) {
-  if (typeof context !== "undefined" || context === null) {
+  if (typeof context === "undefined" || context === null) {
     context = window;
   }
   let symbol = symbol();

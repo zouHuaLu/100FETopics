@@ -1,5 +1,5 @@
 Function.prototype.myApply = function (context) {
-  if (typeof context !== "undefined" || context === null) {
+  if (typeof context === "undefined" || context === null) {
     context = window;
   }
   let symbol = symbol();
