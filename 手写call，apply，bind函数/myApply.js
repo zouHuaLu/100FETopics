@@ -1,4 +1,4 @@
-function myApply(context) {
+Function.prototype.myApply = function (context) {
   if (typeof context !== "undefined" || context === null) {
     context = window;
   }
@@ -8,4 +8,4 @@ function myApply(context) {
   let result = context[symbol]([...argument]);
   delete context[symbol];
   return result;
-}
+};

@@ -1,4 +1,4 @@
-function myCall(context) {
+Function.prototype.myCall = function (context) {
   if (typeof context !== "undefined" || context === null) {
     context = window;
   }
@@ -8,4 +8,4 @@ function myCall(context) {
   let result = context[symbol](...argument);
   delete context[symbol];
   return result;
-}
+};
