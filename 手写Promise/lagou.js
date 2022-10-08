@@ -64,8 +64,8 @@ class MyPromise {
     }
   };
   then(successCallback, failCallback) {
-    successCallback ? successCallback : (value) => value;
-    failCallback
+    successCallback = successCallback ? successCallback : (value) => value;
+    failCallback = failCallback
       ? failCallback
       : (reason) => {
           throw reason;
