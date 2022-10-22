@@ -8,15 +8,21 @@
   </head>
   <body></body>
   <script type="module">
-    import { reactive } from "./reactive/index.js";
+    import { reactive, effect } from "./reactive/index.js";
 
-    let obj = reactive({
-      name: "hj",
-      age: 27,
+    let product = reactive({
+      name: "iphone",
+      price: 5000,
+      count: 5,
     });
-
-    obj.name = "hualu";
-    delete obj.age;
-    console.log(obj);
+    let total = 0;
+    effect(() => {
+      total = product.price * product.count;
+    });
+    console.log(total);
+    product.price = 6000;
+    console.log(total);
+    product.count = 6;
+    console.log(total);
   </script>
 </html>
