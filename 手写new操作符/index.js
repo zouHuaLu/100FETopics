@@ -15,12 +15,13 @@ function People(name, age) {
 // let person = new People("hj", 23);
 
 function myNew() {
-  let constructor = Array.prototype.shift.call(arguments); // 拿到第一个参数
+  let constructor = Array.prototype.shift.call(arguments); // 拿到第一个参数，也就是构造函数
   if (typeof constructor !== "function") {
     return;
   }
   let newObj = Object.create(constructor.prototype); // 新对象指向构造函数的原型对象上
-  let result = constructor.apply(newObj, arguments); // 调用构造函数并且将this指向新对象
+  let result = constructor.apply(newObj, arguments); // constructor是构造函数，newObj是新对象，
+  // 调用构造函数并且将this指向新对象
   let flag =
     result && (typeof result === "object" || typeof result === "function");
   return flag ? result : newObj;

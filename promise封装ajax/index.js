@@ -15,7 +15,7 @@ function ajax(url) {
   });
 }
 
-ajax("./data1.json").then(
+ajax("./data.json").then(
   (data) => {
     console.log(data);
   },
