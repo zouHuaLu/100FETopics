@@ -140,3 +140,15 @@ function toProxyRef(proxy, key) {
   };
   return r;
 }
+
+export function computed(getter) {
+  const result = ref();
+
+  // 通过effect来监听getter内部响应式数据的变化
+  // 在执行getter方法的时候，会去收集依赖
+  effect(() => {
+    result.value = getter();
+  });
+
+  return result;
+}
