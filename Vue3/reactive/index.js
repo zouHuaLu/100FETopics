@@ -91,3 +91,52 @@ export function trigger(target, key) {
     callback();
   });
 }
+
+export function ref(raw) {
+  // 判断raw是否是ref创建的对象，如果是的话，直接返回
+  if (isObject(raw) && raw.__v__isRef) {
+    return;
+  }
+
+  let value = convert(raw); // 如果raw是对象，就调用reactive做响应式，不是就直接返回
+
+  const r = {
+    __v__isRef: true,
+    get value() {
+      track(r, "value"); // 收集依赖
+      return value;
+    },
+    set value(newValue) {
+      if (value !== newValue) {
+        raw = newValue;
+        value = convert(raw);
+        trigger(r, "value"); // 触发依赖
+      }
+    },
+  };
+
+  return r;
+}
+
+export function toRefs(proxy) {
+  const ret = proxy instanceof Array ? new Array(proxy.length) : {}; //proxy可能是响应式的数组，也可能是响应式对象
+
+  for (const key in proxy) {
+    ret[key] = toProxyRef(proxy, key);
+  }
+
+  return ret;
+}
+
+function toProxyRef(proxy, key) {
+  const r = {
+    __v__isRef: true,
+    get value() {
+      return proxy[key];
+    },
+    set value(newValue) {
+      proxy[key] = newValue;
+    },
+  };
+  return r;
+}
