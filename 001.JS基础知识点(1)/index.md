@@ -185,5 +185,78 @@ ES5时期：对象的类型转换是通过内置或者自定义的`toString`, `v
 |  error   | 错误名+错误信息: "<err>.name:<err>.message"	 |          指向自身          |
 
 在ES6, 开发者可以通过官方提供的`[Symbol.toPrimitive]`接口去定义`对象 to primitive`的行为。
-需要注意的是, 如果自定义了对象的`[Symbol.toPrimitive]`的方法, 那么, 当`对象发生 to primitive类型转换`的时候, 那么只会调用`[Symbol.toPrimitive]`方法, 
+需要注意的是, 如果自定义了对象的`[Symbol.toPrimitive]`的方法, 那么, 当`对象发生 to primitive类型转换`的时候,
+那么只会调用`[Symbol.toPrimitive]`方法,
 而无视ES5中提供的`toString()`, `valueOf()`方法。
+
+![img_1.png](img_1.png)
+
+## 四则运算符
+
+### 加法运算符
+
+- 如果其中一方为字符串，那么就会把另一方也转换为字符串
+- 如果一方不是字符串或者数字，那么就会将它转为数字或者字符串
+
+### 除了加法的运算符
+
+只要其中一方是数字，那么另一方就会被转为数字
+
+## 比较运算符
+
+1. 如果是对象，就通过 `toPrimitive` 转换对象
+2. 如果是字符串，就通过 `unicode` 字符索引来比较
+
+```js
+let a = {
+    valueOf() {
+        return 0
+    },
+    toString() {
+        return '1'
+    }
+}
+a > -1 // true
+
+```
+
+## this
+
+```js
+function foo() {
+    console.log(this.a)
+}
+
+var a = 1
+foo()
+
+const obj = {
+    a: 2,
+    foo
+}
+obj.foo()
+
+const c = new foo()
+```
+
+- 对于直接调用`foo`来说，不管`foo`函数放在什么地方，`this`一定是`window`
+- 对于 `obj.foo()` 来说，我们只需要记住，谁调用了函数，谁就是 `this`，所以在这个场景下 `foo` 函数中的 `this` 就是 `obj` 对象
+- 对于 `new` 的方式来说，`this` 被永远绑定在了 `c` 上面，不会被任何方式改变 `this`
+
+### 箭头函数中的`this`
+
+```js
+function a() {
+    return () => {
+        return () => {
+            console.log(this)
+        }
+    }
+}
+
+console.log(a()()())
+```
+
+首先箭头函数是没有this的，箭头函数中的this取决于包裹箭头函数第一个普通函数中的this，在上面例子中，因为包裹箭头函数的第一个普通函数是`a`
+，所以此时的this指向`window`。
+另外对箭头函数使用`call`、`apply`、`bind`方法，不会产生任何效果。
